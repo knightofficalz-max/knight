@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knight LTD - Official Website</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+    
+    * { box-sizing: border-box; scroll-behavior: smooth; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; background: #02050A; color: #fff; overflow-x: hidden; }
+
+    /* --- NAVIGATION & SIDEBAR --- */
+    nav { 
+      position: fixed; top: 0; width: 100%; background: rgba(0, 16, 34, 0.95); 
+      backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; 
+      padding: 10px 20px; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.5); 
+    }
+    .nav-left { display: flex; align-items: center; gap: 15px; }
+    .nav-logo { width: 45px; height: 45px; object-fit: cover; border-radius: 8px; }
+    nav h2 { color: #00b7ff; font-size: 22px; margin: 0; }
+    .menu-icon { font-size: 28px; cursor: pointer; color: #fff; padding: 5px; }
+    
+    /* Sidebar & Overlay */
+    .menu-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); z-index: 998; display: none;
+      backdrop-filter: blur(3px);
+    }
+    .menu-overlay.active { display: block; }
+
+    .sidebar {
+      position: fixed; top: 0; right: -280px; width: 260px; height: 100vh;
+      background: #001829; box-shadow: -5px 0 15px rgba(0,0,0,0.8);
+      display: flex; flex-direction: column; padding-top: 80px;
+      transition: right 0.4s ease; z-index: 999;
+    }
+    .sidebar.active { right: 0; }
+    .sidebar a { padding: 15px 30px; text-decoration: none; font-size: 18px; color: #b8c7d9; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; cursor: pointer; }
+    .sidebar a:hover { background: #002a47; color: #00c2ff; padding-left: 40px; }
+    .close-btn { position: absolute; top: 20px; right: 25px; font-size: 35px; cursor: pointer; color: #ff4d4d; }
+
+    /* --- HEADER --- */
+    header { padding: 120px 20px 60px; text-align: center; background: radial-gradient(circle at top, #01345c, #00050a); }
+    h1 { font-size: 48px; margin-bottom: 10px; background: linear-gradient(90deg, #00aaff, #00e5ff); -webkit-background-clip: text; color: transparent; animation: fadeIn 1.2s; }
+    header p { font-size: 18px; color: #b8c7d9; animation: fadeIn 1.5s; margin-bottom: 20px;}
+    .btn-store { display: inline-block; background: linear-gradient(90deg, #0077ff, #00c2ff); padding: 12px 35px; margin-top: 15px; border-radius: 50px; color: #fff; text-decoration: none; font-weight: 600; transition: .3s; box-shadow: 0 0 15px rgba(0,162,255,0.6); }
+    .btn-store:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(0,187,255,0.9); }
+
+    /* --- IMPROVED NOTES --- */
+    .note-container {
+      background: linear-gradient(90deg, #00121f, #001a2e); border-left: 4px solid #00c2ff;
+      margin: 20px auto; max-width: 800px; padding: 15px; border-radius: 8px; 
+      display: flex; align-items: center; box-shadow: 0 4px 15px rgba(0, 194, 255, 0.15);
+    }
+    .note-icon { font-size: 24px; margin-right: 15px; animation: bellShake 3s infinite; }
+    .text-slider { flex: 1; height: 25px; overflow: hidden; position: relative; }
+    .text-slide {
+      position: absolute; width: 100%; height: 100%; opacity: 0; transform: translateY(20px); 
+      transition: 0.5s ease-in-out; font-size: 15px; color: #e0e6ed; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .text-slide.active { opacity: 1; transform: translateY(0); }
+
+    /* --- BANNER SLIDER WITH ARROWS & DOTS --- */
+    section { padding: 60px 20px; max-width: 1100px; margin: auto; }
+    h2 { color: #00c2ff; font-size: 32px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+    p { max-width: 1000px; margin: auto; font-size: 16px; line-height: 1.8; color: #d3d8df; }
+
+    .banner-slider-container {
+      position: relative; max-width: 900px; margin: 40px auto; height: 250px; 
+      border-radius: 12px; overflow: hidden; border: 2px solid #003a66; 
+      box-shadow: 0 0 20px rgba(0, 119, 255, 0.2);
+    }
+    .banner-slide {
+      position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+      opacity: 0; transition: opacity 0.8s ease-in-out;
+      background-size: cover; background-position: center;
+      display: flex; align-items: flex-end; justify-content: center;
+    }
+    .banner-slide.active { opacity: 1; z-index: 1; }
+    
+    /* Arrows */
+    .prev, .next {
+      cursor: pointer; position: absolute; top: 50%; width: auto; padding: 16px;
+      margin-top: -22px; color: white; font-weight: bold; font-size: 18px;
+      transition: 0.6s ease; border-radius: 0 3px 3px 0; user-select: none;
+      background-color: rgba(0,0,0,0.4); z-index: 2; border: none;
+    }
+    .next { right: 0; border-radius: 3px 0 0 3px; }
+    .prev:hover, .next:hover { background-color: rgba(0,194,255,0.8); }
+
+    /* Dots */
+    .dots-container { position: absolute; bottom: 15px; width: 100%; text-align: center; z-index: 2; }
+    .dot {
+      cursor: pointer; height: 10px; width: 10px; margin: 0 4px;
+      background-color: rgba(255,255,255,0.5); border-radius: 50%;
+      display: inline-block; transition: background-color 0.6s ease;
+    }
+    .dot.active, .dot:hover { background-color: #00c2ff; transform: scale(1.2); }
+
+    /* --- MODAL (Privacy/Terms) --- */
+    .modal {
+      display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+    }
+    .modal-content {
+      background-color: #001829; margin: 10% auto; padding: 30px; border: 1px solid #00c2ff;
+      width: 80%; max-width: 700px; border-radius: 10px; color: #d3d8df;
+      max-height: 70vh; overflow-y: auto; position: relative;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #003a66; padding-bottom: 10px; }
+    .modal-close { color: #ff4d4d; font-size: 28px; font-weight: bold; cursor: pointer; }
+    .modal-body h3 { color: #fff; margin-top: 15px; }
+
+    /* --- CONTACT & SOCIAL --- */
+    .social a { margin: 15px; display: inline-block; transition: .3s; }
+    .social img { width: 32px; height: 32px; filter: invert(54%) sepia(85%) saturate(2000%) hue-rotate(170deg) brightness(100%) contrast(101%); }
+    .social a:hover img { filter: invert(80%) sepia(50%) saturate(500%) hue-rotate(170deg) brightness(120%); transform: scale(1.1); }
+    .email-link { display: block; margin-top: 15px; color: #00c2ff; text-decoration: none; font-size: 18px; font-weight: 500; }
+    .email-link:hover { text-decoration: underline; color: #fff; }
+
+    footer { text-align: center; padding: 40px; background: #00121f; font-size: 14px; color: #8fa3b0; margin-top: 50px; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes bellShake { 0%,100%{transform:rotate(0);} 10%,30%,50%,70%,90%{transform:rotate(10deg);} 20%,40%,60%,80%{transform:rotate(-10deg);} }
+  </style>
+</head>
+<body>
+
+<!-- MENU OVERLAY (Click to close menu) -->
+<div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+<nav>
+  <div class="nav-left">
+    <img src="https://i.ibb.co/twC6yxxT/ic-launcher-monochrome.png" alt="Logo" class="nav-logo">
+    <h2>Knight LTD</h2>
+  </div>
+  <div class="menu-icon" onclick="toggleMenu()">☰</div>
+</nav>
+
+<div class="sidebar" id="sidebar">
+  <span class="close-btn" onclick="toggleMenu()">&times;</span>
+  <a href="#about" onclick="toggleMenu()">About Us</a>
+  <a href="#appstore" onclick="toggleMenu()">Knight Store</a>
+  <!-- Modals Triggers -->
+  <a onclick="openModal('privacyModal'); toggleMenu()">Privacy Policy</a>
+  <a onclick="openModal('termsModal'); toggleMenu()">Terms & Conditions</a>
+  <a href="#contact" onclick="toggleMenu()">Contact Us</a>
+</div>
+<header>
+  <h1>Knight LTD</h1>
+  <p>Official Digital Platform • Smart Apps • Safe Experience</p>
+  <!-- Link Added Here -->
+  <a href="http://knightappstore.vercel.app" class="btn-store">Knight App Store Coming Soon</a>
+</header>
+
+<!-- DYNAMIC NOTES -->
+<div class="note-container">
+  <div class="note-icon">🔔</div>
+  <div class="text-slider" id="note-wrapper">
+    <div class="text-slide active">Loading updates...</div>
+  </div>
+</div>
+
+<!-- DYNAMIC BANNER -->
+<section>
+  <h2>Featured Highlights</h2>
+  <div class="banner-slider-container" id="banner-container">
+    <div class="banner-slide active" style="background: linear-gradient(45deg, #000428, #004e92);"></div>
+    <!-- Controls -->
+    <button class="prev" onclick="moveSlide(-1)">❮</button>
+    <button class="next" onclick="moveSlide(1)">❯</button>
+    <div class="dots-container" id="dots-wrapper"></div>
+  </div>
+</section>
+
+<section id="about">
+  <h2>About Us</h2>
+  <p>Knight LTD builds secure Android apps with next-gen technology powered by performance, precision and trust.</p>
+</section>
+
+<section id="appstore">
+  <h2>Knight App Store</h2>
+  <p>Explore exclusive apps created by Knight LTD. Safe downloads. No ads. Pure performance.</p>
+  <a href="https://knightappstore.vercel.com" class="btn-store">Browse Apps</a>
+</section>
+
+<section id="contact">
+  <h2>Contact Us</h2>
+  <p>Connect with us on our official platforms below:</p>
+  <a href="mailto:knightservice24x7@gmail.com" class="email-link">📧 knightservice24x7@gmail.com</a>
+  <div class="social">
+    <a href="https://www.youtube.com/@KINGHTOFFICALZ" target="_blank"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/youtube.svg" alt="YouTube"/></a>
+    <a href="https://whatsapp.com/channel/0029VbC3FDKDTkJuxIf0yL3g" target="_blank"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/whatsapp.svg" alt="WhatsApp"/></a>
+    <a href="https://t.me/knightofficalz" target="_blank"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="Telegram"/></a>
+    <a href="#" target="_blank"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/instagram.svg" alt="Instagram"/></a>
+  </div>
+</section>
+
+</script>
+<script type="text/javascript">
+	atOptions = {
+		'key' : '66e983f46416c5f13a6188590b5cce8c',
+		'format' : 'iframe',
+		'height' : 50,
+		'width' : 320,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.highperformanceformat.com/66e983f46416c5f13a6188590b5cce8c/invoke.js"></script>
+<a href="https://beta.publishers.adsterra.com/referral/jECL75h581" rel="nofollow"><img alt="banner" src="https://landings-cdn.adsterratech.com/referralBanners/gif/300x425_adsterra_reff.gif" /></a>
+
+<footer>
+  <p>© 2025 Knight LTD | All Rights Reserved</p>
+  <p>Made in India 🇮🇳</p>
+</footer>
+
+<!-- MODALS (Hidden by default) -->
+<div id="privacyModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Privacy Policy</h2>
+      <span class="modal-close" onclick="closeModal('privacyModal')">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p><strong>Effective Date: 2025</strong></p>
+      <p>At Knight LTD, we prioritize your privacy. This policy outlines how we handle your data.</p>
+      <h3>1. Data Collection</h3>
+      <p>We do not collect sensitive personal data. We may collect basic usage statistics to improve app performance.</p>
+      <h3>2. Security</h3>
+      <p>All our apps are verified and safe. We do not share data with third parties.</p>
+      <p>For more details, contact us at knightservice24x7@gmail.com.</p>
+    </div>
+  </div>
+</div>
+
+<div id="termsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Terms & Conditions</h2>
+      <span class="modal-close" onclick="closeModal('termsModal')">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p><strong>Welcome to Knight LTD.</strong></p>
+      <p>By using our services, you agree to the following terms:</p>
+      <h3>1. Usage</h3>
+      <p>You agree not to misuse our apps or attempt to reverse-engineer our software.</p>
+      <h3>2. Liability</h3>
+      <p>Knight LTD is not responsible for any damages arising from the misuse of our platforms.</p>
+      <p>We reserve the right to update these terms at any time.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE & LOGIC -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCu83dVnwzJ72x-_DJ2u2m0olfcWYSrr9w",
+    authDomain: "website-903c3.firebaseapp.com",
+    projectId: "website-903c3",
+    storageBucket: "website-903c3.appspot.com",
+    messagingSenderId: "430534831109",
+    appId: "1:430534831109:web:6d6b921f4b495a154b406c",
+    measurementId: "G-2HJ5T4TPZX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // --- GLOBAL FUNCTIONS ---
+  window.toggleMenu = function() {
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('menuOverlay').classList.toggle('active');
+  }
+
+  window.openModal = function(id) { document.getElementById(id).style.display = "block"; }
+  window.closeModal = function(id) { document.getElementById(id).style.display = "none"; }
+  
+  // Close modal if clicked outside
+  window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+      event.target.style.display = "none";
+    }
+  }
+
+  // --- FETCH NOTES (Unlimited) ---
+  onSnapshot(doc(db, "siteContent", "notes"), (doc) => {
+    if (doc.exists()) {
+      const data = doc.data();
+      const wrapper = document.getElementById('note-wrapper');
+      wrapper.innerHTML = "";
+      
+      const notesList = data.list || ["Welcome to Knight LTD!"];
+      
+      notesList.forEach((note, index) => {
+        wrapper.innerHTML += `<div class="text-slide ${index === 0 ? 'active' : ''}">${note}</div>`;
+      });
+      
+      startNoteSlider();
+    }
+  });
+
+  // --- FETCH BANNERS (Unlimited) ---
+  let bannerInterval;
+  window.currentSlideIndex = 0;
+
+  onSnapshot(doc(db, "siteContent", "banners"), (doc) => {
+    if (doc.exists()) {
+      const data = doc.data();
+      const container = document.getElementById('banner-container');
+      const dotsWrapper = document.getElementById('dots-wrapper');
+      
+      // Remove old slides but keep controls
+      const oldSlides = container.querySelectorAll('.banner-slide');
+      oldSlides.forEach(s => s.remove());
+      dotsWrapper.innerHTML = "";
+
+      const bannersList = data.list || [];
+      
+      if(bannersList.length === 0) {
+        const div = document.createElement('div');
+        div.className = "banner-slide active";
+        div.style.background = "linear-gradient(45deg, #000428, #004e92)";
+        container.insertBefore(div, container.firstChild);
+      } else {
+        bannersList.forEach((b, index) => {
+          // Create Slide
+          const a = document.createElement('a');
+          a.href = b.link || "#";
+          a.className = `banner-slide ${index === 0 ? 'active' : ''}`;
+          a.style.backgroundImage = `url('${b.img}')`;
+          a.target = "_blank";
+          container.insertBefore(a, container.firstChild); // Insert before controls
+
+          // Create Dot
+          const dot = document.createElement('span');
+          dot.className = `dot ${index === 0 ? 'active' : ''}`;
+          dot.onclick = () => setSlide(index);
+          dotsWrapper.appendChild(dot);
+        });
+      }
+      startBannerSlider();
+    }
+  });
+
+  // --- SLIDER LOGIC ---
+  function startNoteSlider() {
+    const slides = document.querySelectorAll('.text-slide');
+    if(slides.length < 2) return;
+    let index = 0;
+    setInterval(() => {
+      slides[index].classList.remove('active');
+      index = (index + 1) % slides.length;
+      slides[index].classList.add('active');
+    }, 3000);
+  }
+
+  window.moveSlide = function(n) {
+    const slides = document.querySelectorAll('.banner-slide');
+    if(slides.length === 0) return;
+    let newIndex = window.currentSlideIndex + n;
+    if (newIndex >= slides.length) newIndex = 0;
+    if (newIndex < 0) newIndex = slides.length - 1;
+    setSlide(newIndex);
+  }
+
+  window.setSlide = function(n) {
+    const slides = document.querySelectorAll('.banner-slide');
+    const dots = document.querySelectorAll('.dot');
+    
+    slides[window.currentSlideIndex].classList.remove('active');
+    if(dots.length > 0) dots[window.currentSlideIndex].classList.remove('active');
+    
+    window.currentSlideIndex = n;
+    
+    slides[window.currentSlideIndex].classList.add('active');
+    if(dots.length > 0) dots[window.currentSlideIndex].classList.add('active');
+    
+    // Reset Timer
+    startBannerSlider();
+  }
+
+  function startBannerSlider() {
+    if(bannerInterval) clearInterval(bannerInterval);
+    bannerInterval = setInterval(() => {
+      window.moveSlide(1);
+    }, 5000);
+  }
+
+</script>
+<script type="text/javascript">
+	atOptions = {
+		'key' : '66e983f46416c5f13a6188590b5cce8c',
+		'format' : 'iframe',
+		'height' : 50,
+		'width' : 320,
+		'params' : {}
+	};
+</script>
+</body>
+</html>
